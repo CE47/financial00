@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Terry's Trousers · Profit Simulator</title>
 
-    <!-- Tailwind + Inter Font -->
+    <!-- Tailwind + Inter -->
     <script src="https://cdn.tailwindcss.com">
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
@@ -114,7 +114,6 @@
         .dark .chart-container canvas {
             filter: brightness(0.9) saturate(0.8);
         }
-        /* scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -136,21 +135,6 @@
 </head>
 <body class="antialiased text-slate-800 dark:text-slate-200 transition-colors duration-300">
 
-    <!-- ====== DARK MODE TOGGLE ====== -->
-    <script>
-        (function() {
-            const stored = localStorage.getItem('tt-theme');
-            if (stored === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else if (stored === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            }
-        })();
-    </script>
-
-    <!-- ====== MAIN APP ====== -->
     <div id="app" class="min-h-screen px-4 py-6 md:px-8 md:py-10 max-w-7xl mx-auto">
 
         <!-- HEADER -->
@@ -174,7 +158,7 @@
             </div>
         </header>
 
-        <!-- ====== KPI ROW ====== -->
+        <!-- KPI ROW -->
         <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6 fade-in delay-1">
             <div class="glass-card rounded-2xl p-4 metric-ring">
                 <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Revenue</div>
@@ -208,12 +192,11 @@
             </div>
         </section>
 
-        <!-- ====== MAIN CONTROLS + CHART ====== -->
+        <!-- CONTROLS + CHART -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 fade-in delay-2">
 
             <!-- LEFT: CONTROLS -->
             <div class="lg:col-span-1 space-y-5">
-                <!-- Revenue -->
                 <div class="glass-card rounded-2xl p-5">
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Unit Price</label>
@@ -277,7 +260,6 @@
 
             <!-- RIGHT: CHART + SCENARIO -->
             <div class="lg:col-span-2 space-y-5">
-                <!-- Chart -->
                 <div class="glass-card rounded-2xl p-5">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide">12-Month Projection</h3>
@@ -292,7 +274,6 @@
                     </div>
                 </div>
 
-                <!-- Scenario + What-If -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="glass-card rounded-2xl p-5">
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Scenario Analysis</h4>
@@ -326,9 +307,8 @@
             </div>
         </div>
 
-        <!-- ====== DETAILED TABLE & BREAK-EVEN ====== -->
+        <!-- DETAILED TABLE & BREAK-EVEN -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in delay-3">
-            <!-- Monthly breakdown -->
             <div class="lg:col-span-2 glass-card rounded-2xl p-5 overflow-x-auto">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide mb-3">Monthly P&amp;L Breakdown</h3>
                 <table class="w-full text-xs">
@@ -344,12 +324,10 @@
                         </tr>
                     </thead>
                     <tbody id="pnlTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60">
-                        <!-- filled by js -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- Break-even + summary -->
             <div class="space-y-4">
                 <div class="glass-card rounded-2xl p-5">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Break-Even Analysis</h4>
@@ -361,4 +339,441 @@
                     </div>
                 </div>
                 <div class="glass-card rounded-2xl p-5">
-                    <h4
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Annual Summary</h4>
+                    <div class="space-y-1.5 text-sm">
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Annual Revenue</span><span id="annualRevenue" class="font-bold text-slate-900 dark:text-white">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Annual Net Profit</span><span id="annualNet" class="font-bold text-slate-900 dark:text-white">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Avg. Monthly Growth</span><span id="annualGrowth" class="font-bold text-blue-600 dark:text-blue-400">0%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-10 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-700/60 pt-6">
+            Terry's Trousers Profit Simulator · Built with ❤️ · Data in USD · All projections are estimates.
+        </footer>
+    </div>
+
+    <!-- ====== JAVASCRIPT ====== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // --- Helper: get element by ID with error logging ---
+            const $ = (id) => {
+                const el = document.getElementById(id);
+                if (!el) console.warn(`Element with id "${id}" not found.`);
+                return el;
+            };
+
+            // --- DOM refs ---
+            const unitPrice = $('unitPrice');
+            const unitsSold = $('unitsSold');
+            const varCost = $('varCost');
+            const fixedCost = $('fixedCost');
+            const growthRate = $('growthRate');
+            const whatIfPrice = $('whatIfPrice');
+            const whatIfVolume = $('whatIfVolume');
+
+            const unitPriceDisplay = $('unitPriceDisplay');
+            const unitsDisplay = $('unitsDisplay');
+            const varCostDisplay = $('varCostDisplay');
+            const fixedCostDisplay = $('fixedCostDisplay');
+            const growthDisplay = $('growthDisplay');
+            const whatIfPriceLabel = $('whatIfPriceLabel');
+            const whatIfVolumeLabel = $('whatIfVolumeLabel');
+            const whatIfImpact = $('whatIfImpact');
+            const scenarioLabel = $('scenarioLabel');
+            const scenarioDesc = $('scenarioDesc');
+
+            const kpiRevenue = $('kpiRevenue');
+            const kpiRevenueChange = $('kpiRevenueChange');
+            const kpiGrossProfit = $('kpiGrossProfit');
+            const kpiGrossMargin = $('kpiGrossMargin');
+            const kpiNetProfit = $('kpiNetProfit');
+            const kpiNetMargin = $('kpiNetMargin');
+            const kpiBreakEven = $('kpiBreakEven');
+            const kpiBreakEvenUnits = $('kpiBreakEvenUnits');
+            const kpiROI = $('kpiROI');
+            const kpiROIStatus = $('kpiROIStatus');
+            const kpiUnits = $('kpiUnits');
+            const kpiUnitsChange = $('kpiUnitsChange');
+
+            const beUnits = $('beUnits');
+            const beRevenue = $('beRevenue');
+            const beSafety = $('beSafety');
+            const beContribution = $('beContribution');
+
+            const annualRevenue = $('annualRevenue');
+            const annualNet = $('annualNet');
+            const annualGrowth = $('annualGrowth');
+
+            const pnlBody = $('pnlTableBody');
+            const chartCanvas = $('projectionChart');
+
+            // --- State ---
+            let currentScenario = 'realistic';
+            let chartInstance = null;
+
+            // --- Helpers ---
+            const fmt = (n) => {
+                if (!isFinite(n)) return '∞';
+                if (Math.abs(n) >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+                if (Math.abs(n) >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+                return '$' + n.toFixed(0);
+            };
+            const fmtPct = (n) => (n * 100).toFixed(1) + '%';
+            const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+            // --- Core calculation ---
+            function compute(price, units, vc, fc, growth, wiPricePct, wiVolPct, scenario) {
+                const adjPrice = price * (1 + wiPricePct / 100);
+                const adjUnits = units * (1 + wiVolPct / 100);
+
+                let growthMul = 1,
+                    demandMul = 1;
+                if (scenario === 'optimistic') { growthMul = 1.4;
+                    demandMul = 1.25; } else if (scenario === 'pessimistic') { growthMul = 0.6;
+                    demandMul = 0.75; }
+
+                const baseUnits = adjUnits * demandMul;
+                const g = (growth / 100) * growthMul;
+                const months = 12;
+                const data = [];
+                let totalRevenue = 0,
+                    totalVC = 0,
+                    totalFC = 0,
+                    totalGP = 0,
+                    totalNP = 0;
+                let cumUnits = 0;
+
+                for (let i = 0; i < months; i++) {
+                    const mUnits = baseUnits * Math.pow(1 + g, i);
+                    const rev = mUnits * adjPrice;
+                    const vcTotal = mUnits * vc;
+                    const fcTotal = fc;
+                    const gp = rev - vcTotal;
+                    const np = gp - fcTotal;
+                    totalRevenue += rev;
+                    totalVC += vcTotal;
+                    totalFC += fcTotal;
+                    totalGP += gp;
+                    totalNP += np;
+                    cumUnits += mUnits;
+                    data.push({
+                        month: i + 1,
+                        units: mUnits,
+                        revenue: rev,
+                        vc: vcTotal,
+                        fc: fcTotal,
+                        gp: gp,
+                        np: np,
+                        margin: rev > 0 ? np / rev : 0
+                    });
+                }
+
+                const contribPerUnit = adjPrice - vc;
+                const beUnitsVal = contribPerUnit > 0 ? fc / contribPerUnit : Infinity;
+                const beRevenueVal = beUnitsVal * adjPrice;
+                const marginSafety = baseUnits > 0 ? (baseUnits - beUnitsVal) / baseUnits : 1;
+                const roi = fc > 0 ? (totalNP / (fc * 12)) : 0;
+
+                const firstRev = data.length > 0 ? data[0].revenue : 1;
+                const lastRev = data.length > 0 ? data[data.length - 1].revenue : 1;
+                const cagr = firstRev > 0 ? Math.pow(lastRev / firstRev, 1 / (months - 1)) - 1 : 0;
+
+                return {
+                    data,
+                    totalRevenue,
+                    totalVC,
+                    totalFC,
+                    totalGP,
+                    totalNP,
+                    avgMargin: totalRevenue > 0 ? totalNP / totalRevenue : 0,
+                    beUnits: beUnitsVal,
+                    beRevenue: beRevenueVal,
+                    marginSafety: clamp(marginSafety, -1, 1),
+                    roi,
+                    cagr,
+                    cumUnits,
+                    baseUnits,
+                    adjPrice,
+                    contribPerUnit,
+                    months
+                };
+            }
+
+            // --- Render ---
+            function render() {
+                console.log('render() called');
+                const price = parseFloat(unitPrice.value);
+                const units = parseFloat(unitsSold.value);
+                const vc = parseFloat(varCost.value);
+                const fc = parseFloat(fixedCost.value);
+                const growth = parseFloat(growthRate.value);
+                const wiPrice = parseFloat(whatIfPrice.value);
+                const wiVol = parseFloat(whatIfVolume.value);
+
+                const result = compute(price, units, vc, fc, growth, wiPrice, wiVol, currentScenario);
+                const d = result.data;
+
+                // Update displays
+                unitPriceDisplay.textContent = '$' + result.adjPrice.toFixed(2);
+                unitsDisplay.textContent = Math.round(result.baseUnits).toLocaleString();
+                varCostDisplay.textContent = '$' + vc.toFixed(2);
+                fixedCostDisplay.textContent = '$' + fc.toFixed(0);
+                growthDisplay.textContent = growth.toFixed(1) + '%';
+                whatIfPriceLabel.textContent = (wiPrice >= 0 ? '+' : '') + wiPrice.toFixed(0) + '%';
+                whatIfVolumeLabel.textContent = (wiVol >= 0 ? '+' : '') + wiVol.toFixed(0) + '%';
+
+                const baseResult = compute(price, units, vc, fc, growth, 0, 0, currentScenario);
+                const impact = result.totalNP - baseResult.totalNP;
+                whatIfImpact.textContent = (impact >= 0 ? '+' : '') + fmt(impact);
+                whatIfImpact.className = 'font-semibold ' + (impact >= 0 ? 'text-emerald-600 dark:text-emerald-400' :
+                    'text-rose-600 dark:text-rose-400');
+
+                // KPIs
+                kpiRevenue.textContent = fmt(result.totalRevenue);
+                const revChange = result.baseUnits > 0 ? (result.totalRevenue - baseResult.totalRevenue) / baseResult
+                    .totalRevenue : 0;
+                kpiRevenueChange.textContent = (revChange >= 0 ? '▲' : '▼') + ' ' + fmtPct(Math.abs(revChange));
+                kpiRevenueChange.className = 'text-xs font-medium ' + (revChange >= 0 ? 'text-emerald-600 dark:text-emerald-400' :
+                    'text-rose-600 dark:text-rose-400');
+
+                kpiGrossProfit.textContent = fmt(result.totalGP);
+                kpiGrossMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalGP / result.totalRevenue) : '0%') +
+                    ' margin';
+
+                kpiNetProfit.textContent = fmt(result.totalNP);
+                kpiNetMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalNP / result.totalRevenue) : '0%') +
+                    ' margin';
+
+                const beUnitsVal = result.beUnits;
+                kpiBreakEven.textContent = isFinite(beUnitsVal) ? Math.round(beUnitsVal).toLocaleString() : '∞';
+                kpiBreakEvenUnits.textContent = 'units';
+
+                kpiROI.textContent = fmtPct(result.roi);
+                kpiROIStatus.textContent = result.roi > 0.2 ? 'Strong' : result.roi > 0.05 ? 'Moderate' : 'Low';
+                kpiROIStatus.className = 'text-xs font-medium ' + (result.roi > 0.2 ? 'text-emerald-600 dark:text-emerald-400' :
+                    result.roi > 0.05 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400');
+
+                kpiUnits.textContent = Math.round(result.cumUnits).toLocaleString();
+                kpiUnitsChange.textContent = 'annualized';
+
+                // Break-even
+                beUnits.textContent = isFinite(beUnitsVal) ? Math.round(beUnitsVal).toLocaleString() : '∞';
+                beRevenue.textContent = isFinite(result.beRevenue) ? fmt(result.beRevenue) : '∞';
+                beSafety.textContent = isFinite(result.marginSafety) ? fmtPct(result.marginSafety) : '—';
+                beContribution.textContent = '$' + result.contribPerUnit.toFixed(2);
+
+                // Annual
+                annualRevenue.textContent = fmt(result.totalRevenue);
+                annualNet.textContent = fmt(result.totalNP);
+                annualGrowth.textContent = fmtPct(result.cagr);
+
+                // P&L Table
+                let html = '';
+                const rows = d.slice(0, 12);
+                rows.forEach((r, idx) => {
+                    const isLast = idx === rows.length - 1;
+                    html += `<tr class="${isLast ? 'border-b-2 border-slate-300 dark:border-slate-600' : ''} hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">`;
+                    html += `<td class="py-2 pr-4 font-medium text-slate-700 dark:text-slate-300">M${r.month}</td>`;
+                    html += `<td class="text-right py-2 px-3 font-mono">${fmt(r.revenue)}</td>`;
+                    html += `<td class="text-right py-2 px-3 font-mono text-slate-500 dark:text-slate-400">${fmt(r.vc)}</td>`;
+                    html += `<td class="text-right py-2 px-3 font-mono text-slate-500 dark:text-slate-400">${fmt(r.fc)}</td>`;
+                    html +=
+                        `<td class="text-right py-2 px-3 font-mono text-emerald-600 dark:text-emerald-400">${fmt(r.gp)}</td>`;
+                    html +=
+                        `<td class="text-right py-2 px-3 font-mono ${r.np >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400'}">${fmt(r.np)}</td>`;
+                    html +=
+                        `<td class="text-right py-2 px-3 font-mono ${r.margin >= 0.1 ? 'text-emerald-600' : r.margin >= 0 ? 'text-amber-600' : 'text-rose-600'}">${fmtPct(r.margin)}</td>`;
+                    html += `</tr>`;
+                });
+                pnlBody.innerHTML = html;
+
+                // Chart
+                updateChart(d);
+            }
+
+            // --- Chart ---
+            function updateChart(data) {
+                if (!chartCanvas) return;
+                const ctx = chartCanvas.getContext('2d');
+                const labels = data.map(d => 'M' + d.month);
+                const revData = data.map(d => d.revenue);
+                const npData = data.map(d => d.np);
+                const costData = data.map(d => d.vc + d.fc);
+
+                if (chartInstance) {
+                    chartInstance.data.labels = labels;
+                    chartInstance.data.datasets[0].data = revData;
+                    chartInstance.data.datasets[1].data = npData;
+                    chartInstance.data.datasets[2].data = costData;
+                    chartInstance.update();
+                    return;
+                }
+
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Revenue',
+                            data: revData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59,130,246,0.08)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointBackgroundColor: '#3b82f6',
+                            borderWidth: 2.5,
+                        }, {
+                            label: 'Net Profit',
+                            data: npData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16,185,129,0.06)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointBackgroundColor: '#10b981',
+                            borderWidth: 2.5,
+                        }, {
+                            label: 'Total Costs',
+                            data: costData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245,158,11,0.05)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointBackgroundColor: '#f59e0b',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(15,23,42,0.85)',
+                                titleColor: '#f1f5f9',
+                                bodyColor: '#e2e8f0',
+                                borderColor: 'rgba(255,255,255,0.06)',
+                                borderWidth: 1,
+                                cornerRadius: 10,
+                                padding: 10,
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#94a3b8', font: { size: 9 } },
+                            },
+                            y: {
+                                grid: { color: 'rgba(0,0,0,0.04)' },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    font: { size: 9 },
+                                    callback: function(value) {
+                                        if (value >= 1e6) return '$' + (value / 1e6).toFixed(1) + 'M';
+                                        if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                        return '$' + value.toFixed(0);
+                                    }
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+            }
+
+            // --- Scenario buttons ---
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sc = this.dataset.scenario;
+                    currentScenario = sc;
+                    const labels = {
+                        realistic: ['Realistic', '— base case with standard growth'],
+                        optimistic: ['Optimistic', '— accelerated growth + higher demand'],
+                        pessimistic: ['Pessimistic', '— slower growth + reduced demand']
+                    };
+                    scenarioLabel.textContent = labels[sc][0];
+                    scenarioDesc.textContent = labels[sc][1];
+                    document.querySelectorAll('.scenario-btn').forEach(b => {
+                        b.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-400');
+                    });
+                    this.classList.add('ring-2', 'ring-offset-2', 'ring-blue-400');
+                    render();
+                });
+            });
+            document.querySelector('.scenario-btn[data-scenario="realistic"]')?.classList.add('ring-2', 'ring-offset-2',
+                'ring-blue-400');
+
+            // --- Theme toggle ---
+            const themeToggle = $('themeToggle');
+            const themeIcon = $('themeIcon');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const html = document.documentElement;
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('tt-theme', 'light');
+                        themeIcon.textContent = '🌙';
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('tt-theme', 'dark');
+                        themeIcon.textContent = '☀️';
+                    }
+                });
+                // init icon
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIcon.textContent = '☀️';
+                } else {
+                    themeIcon.textContent = '🌙';
+                }
+            }
+
+            // --- Wire up sliders ---
+            const sliderIds = ['unitPrice', 'unitsSold', 'varCost', 'fixedCost', 'growthRate', 'whatIfPrice', 'whatIfVolume'];
+            sliderIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', render);
+                } else {
+                    console.warn('Slider element with id "' + id + '" not found.');
+                }
+            });
+
+            // --- Initial render after DOM is ready ---
+            // Also ensure chart canvas is ready
+            if (chartCanvas) {
+                // initial render
+                render();
+            } else {
+                console.error('Chart canvas not found.');
+            }
+
+            // --- Re-render on resize to fix chart ---
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (chartInstance) chartInstance.resize();
+                }, 150);
+            });
+
+            console.log('🧵 Terry\'s Trousers Profit Simulator · ready');
+        })();
+    </script>
+
+</body>
+</html>
