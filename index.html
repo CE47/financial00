@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Terry's Trousers · Profit Simulator</title>
+    <title>Terry's Trousers · Executive Dashboard</title>
 
     <!-- Tailwind + Inter -->
     <script src="https://cdn.tailwindcss.com">
@@ -145,7 +145,7 @@
                     Terry's Trousers
                 </h1>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium tracking-wide">
-                    Strategic Financial Modeling &amp; Profit Growth Calculator
+                    Executive Profit Simulator · CFO Dashboard
                 </p>
             </div>
             <div class="flex items-center gap-3">
@@ -153,13 +153,13 @@
                     <span id="themeIcon">🌙</span>
                 </button>
                 <span class="text-xs font-mono bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-sm">
-                    v3.0 · live
+                    v4.0 · executive
                 </span>
             </div>
         </header>
 
-        <!-- KPI ROW -->
-        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6 fade-in delay-1">
+        <!-- KPI ROW 1: TOP-LINE -->
+        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-4 fade-in delay-1">
             <div class="glass-card rounded-2xl p-4 metric-ring">
                 <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Revenue</div>
                 <div id="kpiRevenue" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">$0</div>
@@ -171,10 +171,29 @@
                 <div id="kpiGrossMargin" class="text-xs font-medium text-blue-600 dark:text-blue-400">0% margin</div>
             </div>
             <div class="glass-card rounded-2xl p-4 metric-ring">
-                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Net Profit</div>
-                <div id="kpiNetProfit" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">$0</div>
-                <div id="kpiNetMargin" class="text-xs font-medium text-indigo-600 dark:text-indigo-400">0% margin</div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">EBITDA</div>
+                <div id="kpiEBITDA" class="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400 stat-value mt-0.5">$0</div>
+                <div id="kpiEBITDAMargin" class="text-xs font-medium text-purple-500 dark:text-purple-300">0% margin</div>
             </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">EBIT</div>
+                <div id="kpiEBIT" class="text-xl md:text-2xl font-bold text-indigo-600 dark:text-indigo-400 stat-value mt-0.5">$0</div>
+                <div id="kpiEBITMargin" class="text-xs font-medium text-indigo-500 dark:text-indigo-300">0% margin</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Net Income</div>
+                <div id="kpiNetIncome" class="text-xl md:text-2xl font-bold text-emerald-600 dark:text-emerald-400 stat-value mt-0.5">$0</div>
+                <div id="kpiNetMargin" class="text-xs font-medium text-emerald-500 dark:text-emerald-300">0% margin</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Cash Flow</div>
+                <div id="kpiCashFlow" class="text-xl md:text-2xl font-bold text-teal-600 dark:text-teal-400 stat-value mt-0.5">$0</div>
+                <div id="kpiCashFlowLabel" class="text-xs font-medium text-slate-400 dark:text-slate-500">operating</div>
+            </div>
+        </section>
+
+        <!-- KPI ROW 2: OPERATIONAL -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mb-6 fade-in delay-2">
             <div class="glass-card rounded-2xl p-4 metric-ring">
                 <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Break-Even</div>
                 <div id="kpiBreakEven" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">0</div>
@@ -188,93 +207,118 @@
             <div class="glass-card rounded-2xl p-4 metric-ring">
                 <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Units Sold</div>
                 <div id="kpiUnits" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">0</div>
-                <div id="kpiUnitsChange" class="text-xs font-medium text-slate-400 dark:text-slate-500">projected</div>
+                <div id="kpiUnitsChange" class="text-xs font-medium text-slate-400 dark:text-slate-500">annualized</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Margin of Safety</div>
+                <div id="kpiSafety" class="text-xl md:text-2xl font-bold text-amber-600 dark:text-amber-400 stat-value mt-0.5">0%</div>
+                <div id="kpiSafetyLabel" class="text-xs font-medium text-slate-400 dark:text-slate-500">vs. break-even</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Depreciation</div>
+                <div id="kpiDepreciation" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">$0</div>
+                <div id="kpiDepreciationLabel" class="text-xs font-medium text-slate-400 dark:text-slate-500">monthly</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Effective Tax</div>
+                <div id="kpiTax" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">0%</div>
+                <div id="kpiTaxLabel" class="text-xs font-medium text-slate-400 dark:text-slate-500">rate</div>
             </div>
         </section>
 
-        <!-- CONTROLS + CHART -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 fade-in delay-2">
+        <!-- CONTROLS + CHARTS -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6 fade-in delay-3">
 
-            <!-- LEFT: CONTROLS -->
-            <div class="lg:col-span-1 space-y-5">
-                <div class="glass-card rounded-2xl p-5">
+            <!-- LEFT: CONTROLS (2/4) -->
+            <div class="lg:col-span-1 space-y-4">
+                <!-- Existing sliders -->
+                <div class="glass-card rounded-2xl p-4">
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Unit Price</label>
                         <span id="unitPriceDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">$45.00</span>
                     </div>
                     <input id="unitPrice" type="range" min="10" max="120" value="45" step="0.5" class="input-range w-full" />
-                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        <span>$10</span>
-                        <span>$120</span>
-                    </div>
                 </div>
-
-                <div class="glass-card rounded-2xl p-5">
+                <div class="glass-card rounded-2xl p-4">
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Units Sold (monthly)</label>
                         <span id="unitsDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">1,250</span>
                     </div>
                     <input id="unitsSold" type="range" min="50" max="5000" value="1250" step="10" class="input-range w-full" />
-                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        <span>50</span>
-                        <span>5,000</span>
-                    </div>
                 </div>
-
-                <div class="glass-card rounded-2xl p-5">
+                <div class="glass-card rounded-2xl p-4">
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Variable Cost / Unit</label>
                         <span id="varCostDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">$18.00</span>
                     </div>
                     <input id="varCost" type="range" min="2" max="80" value="18" step="0.5" class="input-range w-full" />
-                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        <span>$2</span>
-                        <span>$80</span>
-                    </div>
                 </div>
-
-                <div class="glass-card rounded-2xl p-5">
+                <div class="glass-card rounded-2xl p-4">
                     <div class="flex items-center justify-between mb-1">
-                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fixed Costs (monthly)</label>
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fixed Costs (cash)</label>
                         <span id="fixedCostDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">$12,500</span>
                     </div>
                     <input id="fixedCost" type="range" min="1000" max="50000" value="12500" step="100" class="input-range w-full" />
-                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        <span>$1k</span>
-                        <span>$50k</span>
-                    </div>
                 </div>
-
-                <div class="glass-card rounded-2xl p-5">
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Depreciation (monthly)</label>
+                        <span id="depreciationDisplay" class="text-sm font-bold text-purple-600 dark:text-purple-400">$1,000</span>
+                    </div>
+                    <input id="depreciation" type="range" min="0" max="10000" value="1000" step="100" class="input-range w-full" />
+                </div>
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tax Rate</label>
+                        <span id="taxRateDisplay" class="text-sm font-bold text-emerald-600 dark:text-emerald-400">25%</span>
+                    </div>
+                    <input id="taxRate" type="range" min="0" max="40" value="25" step="1" class="input-range w-full" />
+                </div>
+                <div class="glass-card rounded-2xl p-4">
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Growth Rate (monthly %)</label>
                         <span id="growthDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">5.0%</span>
                     </div>
                     <input id="growthRate" type="range" min="0" max="25" value="5" step="0.5" class="input-range w-full" />
-                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        <span>0%</span>
-                        <span>25%</span>
-                    </div>
                 </div>
+                <!-- What-If sliders moved to a separate card -->
             </div>
 
-            <!-- RIGHT: CHART + SCENARIO -->
-            <div class="lg:col-span-2 space-y-5">
+            <!-- RIGHT: CHARTS & SCENARIO (3/4) -->
+            <div class="lg:col-span-3 space-y-5">
+                <!-- Chart 1: Revenue / Profit / Costs -->
                 <div class="glass-card rounded-2xl p-5">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide">12-Month Projection</h3>
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide">12‑Month P&L Projection</h3>
                         <div class="flex items-center gap-3 text-xs">
                             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Revenue</span>
-                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Net Profit</span>
-                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Costs</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Net Income</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Total Costs</span>
                         </div>
                     </div>
-                    <div class="chart-container" style="position:relative; height:240px;">
+                    <div class="chart-container" style="position:relative; height:200px;">
                         <canvas id="projectionChart"></canvas>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Chart 2: Cost Breakdown Stacked Bar -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide">Monthly Cost Structure</h3>
+                        <div class="flex items-center gap-3 text-xs">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-400"></span> Variable</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Fixed (cash)</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-purple-400"></span> Depreciation</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400"></span> Net Profit</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position:relative; height:200px;">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario & What-If -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="glass-card rounded-2xl p-5">
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Scenario Analysis</h4>
                         <div class="flex gap-2 flex-wrap">
@@ -288,7 +332,7 @@
                         </div>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">What-If Simulator</h4>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">What‑If Simulator</h4>
                         <div class="flex items-center gap-3">
                             <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Δ Price</label>
                             <input id="whatIfPrice" type="range" min="-30" max="30" value="0" step="1" class="input-range w-full" />
@@ -300,27 +344,29 @@
                             <span id="whatIfVolumeLabel" class="text-xs font-bold text-blue-600 dark:text-blue-400 w-10 text-right">+0%</span>
                         </div>
                         <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                            Impact: <span id="whatIfImpact" class="font-semibold text-slate-700 dark:text-slate-300">$0</span>
+                            Net Income Impact: <span id="whatIfImpact" class="font-semibold text-slate-700 dark:text-slate-300">$0</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- DETAILED TABLE & BREAK-EVEN -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in delay-3">
+        <!-- DETAILED TABLE & BREAK-EVEN + RATIOS -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in delay-4">
             <div class="lg:col-span-2 glass-card rounded-2xl p-5 overflow-x-auto">
-                <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide mb-3">Monthly P&amp;L Breakdown</h3>
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide mb-3">Monthly P&L Breakdown</h3>
                 <table class="w-full text-xs">
                     <thead>
                         <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
-                            <th class="text-left py-2 pr-4">Month</th>
-                            <th class="text-right py-2 px-3">Revenue</th>
-                            <th class="text-right py-2 px-3">Variable</th>
-                            <th class="text-right py-2 px-3">Fixed</th>
-                            <th class="text-right py-2 px-3">Gross Profit</th>
-                            <th class="text-right py-2 px-3">Net Profit</th>
-                            <th class="text-right py-2 px-3">Margin</th>
+                            <th class="text-left py-2 pr-2">Month</th>
+                            <th class="text-right py-2 px-2">Revenue</th>
+                            <th class="text-right py-2 px-2">Variable</th>
+                            <th class="text-right py-2 px-2">Fixed</th>
+                            <th class="text-right py-2 px-2">Dep.</th>
+                            <th class="text-right py-2 px-2">EBITDA</th>
+                            <th class="text-right py-2 px-2">EBIT</th>
+                            <th class="text-right py-2 px-2">Net Inc.</th>
+                            <th class="text-right py-2 px-2">Margin</th>
                         </tr>
                     </thead>
                     <tbody id="pnlTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -330,7 +376,7 @@
 
             <div class="space-y-4">
                 <div class="glass-card rounded-2xl p-5">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Break-Even Analysis</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Break‑Even & Safety</h4>
                     <div class="space-y-1.5 text-sm">
                         <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Units to break even</span><span id="beUnits" class="font-bold text-slate-900 dark:text-white">0</span></div>
                         <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Revenue at BE</span><span id="beRevenue" class="font-bold text-slate-900 dark:text-white">$0</span></div>
@@ -341,16 +387,18 @@
                 <div class="glass-card rounded-2xl p-5">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Annual Summary</h4>
                     <div class="space-y-1.5 text-sm">
-                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Annual Revenue</span><span id="annualRevenue" class="font-bold text-slate-900 dark:text-white">$0</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Annual Net Profit</span><span id="annualNet" class="font-bold text-slate-900 dark:text-white">$0</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Avg. Monthly Growth</span><span id="annualGrowth" class="font-bold text-blue-600 dark:text-blue-400">0%</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Revenue</span><span id="annualRevenue" class="font-bold text-slate-900 dark:text-white">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">EBITDA</span><span id="annualEBITDA" class="font-bold text-purple-600 dark:text-purple-400">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Net Income</span><span id="annualNet" class="font-bold text-emerald-600 dark:text-emerald-400">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Cash Flow</span><span id="annualCashFlow" class="font-bold text-teal-600 dark:text-teal-400">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Avg. Growth (CAGR)</span><span id="annualGrowth" class="font-bold text-blue-600 dark:text-blue-400">0%</span></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <footer class="mt-10 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-700/60 pt-6">
-            Terry's Trousers Profit Simulator · Built with ❤️ · Data in USD · All projections are estimates.
+            Terry's Trousers Executive Dashboard · Built for strategic decision‑making · All figures in USD.
         </footer>
     </div>
 
@@ -359,10 +407,9 @@
         (function() {
             'use strict';
 
-            // --- Helper: get element by ID with error logging ---
             const $ = (id) => {
                 const el = document.getElementById(id);
-                if (!el) console.warn(`Element with id "${id}" not found.`);
+                if (!el) console.warn(`Element #${id} not found.`);
                 return el;
             };
 
@@ -371,6 +418,8 @@
             const unitsSold = $('unitsSold');
             const varCost = $('varCost');
             const fixedCost = $('fixedCost');
+            const depreciation = $('depreciation');
+            const taxRate = $('taxRate');
             const growthRate = $('growthRate');
             const whatIfPrice = $('whatIfPrice');
             const whatIfVolume = $('whatIfVolume');
@@ -379,6 +428,8 @@
             const unitsDisplay = $('unitsDisplay');
             const varCostDisplay = $('varCostDisplay');
             const fixedCostDisplay = $('fixedCostDisplay');
+            const depreciationDisplay = $('depreciationDisplay');
+            const taxRateDisplay = $('taxRateDisplay');
             const growthDisplay = $('growthDisplay');
             const whatIfPriceLabel = $('whatIfPriceLabel');
             const whatIfVolumeLabel = $('whatIfVolumeLabel');
@@ -386,18 +437,31 @@
             const scenarioLabel = $('scenarioLabel');
             const scenarioDesc = $('scenarioDesc');
 
+            // KPIs
             const kpiRevenue = $('kpiRevenue');
             const kpiRevenueChange = $('kpiRevenueChange');
             const kpiGrossProfit = $('kpiGrossProfit');
             const kpiGrossMargin = $('kpiGrossMargin');
-            const kpiNetProfit = $('kpiNetProfit');
+            const kpiEBITDA = $('kpiEBITDA');
+            const kpiEBITDAMargin = $('kpiEBITDAMargin');
+            const kpiEBIT = $('kpiEBIT');
+            const kpiEBITMargin = $('kpiEBITMargin');
+            const kpiNetIncome = $('kpiNetIncome');
             const kpiNetMargin = $('kpiNetMargin');
+            const kpiCashFlow = $('kpiCashFlow');
+            const kpiCashFlowLabel = $('kpiCashFlowLabel');
             const kpiBreakEven = $('kpiBreakEven');
             const kpiBreakEvenUnits = $('kpiBreakEvenUnits');
             const kpiROI = $('kpiROI');
             const kpiROIStatus = $('kpiROIStatus');
             const kpiUnits = $('kpiUnits');
             const kpiUnitsChange = $('kpiUnitsChange');
+            const kpiSafety = $('kpiSafety');
+            const kpiSafetyLabel = $('kpiSafetyLabel');
+            const kpiDepreciation = $('kpiDepreciation');
+            const kpiDepreciationLabel = $('kpiDepreciationLabel');
+            const kpiTax = $('kpiTax');
+            const kpiTaxLabel = $('kpiTaxLabel');
 
             const beUnits = $('beUnits');
             const beRevenue = $('beRevenue');
@@ -405,15 +469,19 @@
             const beContribution = $('beContribution');
 
             const annualRevenue = $('annualRevenue');
+            const annualEBITDA = $('annualEBITDA');
             const annualNet = $('annualNet');
+            const annualCashFlow = $('annualCashFlow');
             const annualGrowth = $('annualGrowth');
 
             const pnlBody = $('pnlTableBody');
             const chartCanvas = $('projectionChart');
+            const costChartCanvas = $('costChart');
 
             // --- State ---
             let currentScenario = 'realistic';
             let chartInstance = null;
+            let costChartInstance = null;
 
             // --- Helpers ---
             const fmt = (n) => {
@@ -426,7 +494,7 @@
             const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
             // --- Core calculation ---
-            function compute(price, units, vc, fc, growth, wiPricePct, wiVolPct, scenario) {
+            function compute(price, units, vc, fixedCash, dep, taxRatePct, growth, wiPricePct, wiVolPct, scenario) {
                 const adjPrice = price * (1 + wiPricePct / 100);
                 const adjUnits = units * (1 + wiVolPct / 100);
 
@@ -442,41 +510,59 @@
                 const data = [];
                 let totalRevenue = 0,
                     totalVC = 0,
-                    totalFC = 0,
-                    totalGP = 0,
-                    totalNP = 0;
+                    totalFixedCash = 0,
+                    totalDep = 0,
+                    totalEBITDA = 0,
+                    totalEBIT = 0,
+                    totalNetIncome = 0,
+                    totalCashFlow = 0;
                 let cumUnits = 0;
 
                 for (let i = 0; i < months; i++) {
                     const mUnits = baseUnits * Math.pow(1 + g, i);
                     const rev = mUnits * adjPrice;
                     const vcTotal = mUnits * vc;
-                    const fcTotal = fc;
-                    const gp = rev - vcTotal;
-                    const np = gp - fcTotal;
+                    const fcCash = fixedCash;
+                    const depTotal = dep;
+                    const ebitda = rev - vcTotal - fcCash;
+                    const ebit = ebitda - depTotal;
+                    const tax = Math.max(0, ebit * (taxRatePct / 100));
+                    const netIncome = ebit - tax;
+                    const cashFlow = netIncome + depTotal; // simple operating CF
+
                     totalRevenue += rev;
                     totalVC += vcTotal;
-                    totalFC += fcTotal;
-                    totalGP += gp;
-                    totalNP += np;
+                    totalFixedCash += fcCash;
+                    totalDep += depTotal;
+                    totalEBITDA += ebitda;
+                    totalEBIT += ebit;
+                    totalNetIncome += netIncome;
+                    totalCashFlow += cashFlow;
                     cumUnits += mUnits;
+
                     data.push({
                         month: i + 1,
                         units: mUnits,
                         revenue: rev,
                         vc: vcTotal,
-                        fc: fcTotal,
-                        gp: gp,
-                        np: np,
-                        margin: rev > 0 ? np / rev : 0
+                        fixedCash: fcCash,
+                        depreciation: depTotal,
+                        ebitda: ebitda,
+                        ebit: ebit,
+                        netIncome: netIncome,
+                        cashFlow: cashFlow,
+                        margin: rev > 0 ? netIncome / rev : 0
                     });
                 }
 
                 const contribPerUnit = adjPrice - vc;
-                const beUnitsVal = contribPerUnit > 0 ? fc / contribPerUnit : Infinity;
+                // Break-even: fixed cash + dep? For break-even in terms of net income, we need to cover total fixed costs (cash + dep) and taxes? 
+                // Typically break-even is where EBIT = 0 (covers all costs including depreciation). So break-even units = (fixedCash + dep) / contribPerUnit.
+                const totalFixed = fixedCash + dep;
+                const beUnitsVal = contribPerUnit > 0 ? totalFixed / contribPerUnit : Infinity;
                 const beRevenueVal = beUnitsVal * adjPrice;
                 const marginSafety = baseUnits > 0 ? (baseUnits - beUnitsVal) / baseUnits : 1;
-                const roi = fc > 0 ? (totalNP / (fc * 12)) : 0;
+                const roi = (fixedCash + dep) > 0 ? (totalNetIncome / ((fixedCash + dep) * 12)) : 0;
 
                 const firstRev = data.length > 0 ? data[0].revenue : 1;
                 const lastRev = data.length > 0 ? data[data.length - 1].revenue : 1;
@@ -486,10 +572,12 @@
                     data,
                     totalRevenue,
                     totalVC,
-                    totalFC,
-                    totalGP,
-                    totalNP,
-                    avgMargin: totalRevenue > 0 ? totalNP / totalRevenue : 0,
+                    totalFixedCash,
+                    totalDep,
+                    totalEBITDA,
+                    totalEBIT,
+                    totalNetIncome,
+                    totalCashFlow,
                     beUnits: beUnitsVal,
                     beRevenue: beRevenueVal,
                     marginSafety: clamp(marginSafety, -1, 1),
@@ -505,49 +593,66 @@
 
             // --- Render ---
             function render() {
-                console.log('render() called');
                 const price = parseFloat(unitPrice.value);
                 const units = parseFloat(unitsSold.value);
                 const vc = parseFloat(varCost.value);
-                const fc = parseFloat(fixedCost.value);
+                const fixedCash = parseFloat(fixedCost.value);
+                const dep = parseFloat(depreciation.value);
+                const taxRatePct = parseFloat(taxRate.value);
                 const growth = parseFloat(growthRate.value);
                 const wiPrice = parseFloat(whatIfPrice.value);
                 const wiVol = parseFloat(whatIfVolume.value);
 
-                const result = compute(price, units, vc, fc, growth, wiPrice, wiVol, currentScenario);
+                const result = compute(price, units, vc, fixedCash, dep, taxRatePct, growth, wiPrice, wiVol,
+                currentScenario);
                 const d = result.data;
 
                 // Update displays
                 unitPriceDisplay.textContent = '$' + result.adjPrice.toFixed(2);
                 unitsDisplay.textContent = Math.round(result.baseUnits).toLocaleString();
                 varCostDisplay.textContent = '$' + vc.toFixed(2);
-                fixedCostDisplay.textContent = '$' + fc.toFixed(0);
+                fixedCostDisplay.textContent = '$' + fixedCash.toFixed(0);
+                depreciationDisplay.textContent = '$' + dep.toFixed(0);
+                taxRateDisplay.textContent = taxRatePct.toFixed(0) + '%';
                 growthDisplay.textContent = growth.toFixed(1) + '%';
                 whatIfPriceLabel.textContent = (wiPrice >= 0 ? '+' : '') + wiPrice.toFixed(0) + '%';
                 whatIfVolumeLabel.textContent = (wiVol >= 0 ? '+' : '') + wiVol.toFixed(0) + '%';
 
-                const baseResult = compute(price, units, vc, fc, growth, 0, 0, currentScenario);
-                const impact = result.totalNP - baseResult.totalNP;
+                // What-if impact on Net Income
+                const baseResult = compute(price, units, vc, fixedCash, dep, taxRatePct, growth, 0, 0, currentScenario);
+                const impact = result.totalNetIncome - baseResult.totalNetIncome;
                 whatIfImpact.textContent = (impact >= 0 ? '+' : '') + fmt(impact);
                 whatIfImpact.className = 'font-semibold ' + (impact >= 0 ? 'text-emerald-600 dark:text-emerald-400' :
                     'text-rose-600 dark:text-rose-400');
 
-                // KPIs
+                // --- KPIs Row 1 ---
                 kpiRevenue.textContent = fmt(result.totalRevenue);
-                const revChange = result.baseUnits > 0 ? (result.totalRevenue - baseResult.totalRevenue) / baseResult
+                const revChange = result.totalRevenue > 0 ? (result.totalRevenue - baseResult.totalRevenue) / baseResult
                     .totalRevenue : 0;
                 kpiRevenueChange.textContent = (revChange >= 0 ? '▲' : '▼') + ' ' + fmtPct(Math.abs(revChange));
                 kpiRevenueChange.className = 'text-xs font-medium ' + (revChange >= 0 ? 'text-emerald-600 dark:text-emerald-400' :
                     'text-rose-600 dark:text-rose-400');
 
-                kpiGrossProfit.textContent = fmt(result.totalGP);
-                kpiGrossMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalGP / result.totalRevenue) : '0%') +
-                    ' margin';
+                kpiGrossProfit.textContent = fmt(result.totalRevenue - result.totalVC);
+                kpiGrossMargin.textContent = (result.totalRevenue > 0 ? fmtPct((result.totalRevenue - result.totalVC) /
+                    result.totalRevenue) : '0%') + ' margin';
 
-                kpiNetProfit.textContent = fmt(result.totalNP);
-                kpiNetMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalNP / result.totalRevenue) : '0%') +
-                    ' margin';
+                kpiEBITDA.textContent = fmt(result.totalEBITDA);
+                kpiEBITDAMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalEBITDA / result.totalRevenue) :
+                    '0%') + ' margin';
 
+                kpiEBIT.textContent = fmt(result.totalEBIT);
+                kpiEBITMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalEBIT / result.totalRevenue) :
+                    '0%') + ' margin';
+
+                kpiNetIncome.textContent = fmt(result.totalNetIncome);
+                kpiNetMargin.textContent = (result.totalRevenue > 0 ? fmtPct(result.totalNetIncome / result.totalRevenue) :
+                    '0%') + ' margin';
+
+                kpiCashFlow.textContent = fmt(result.totalCashFlow);
+                kpiCashFlowLabel.textContent = 'operating';
+
+                // --- KPIs Row 2 ---
                 const beUnitsVal = result.beUnits;
                 kpiBreakEven.textContent = isFinite(beUnitsVal) ? Math.round(beUnitsVal).toLocaleString() : '∞';
                 kpiBreakEvenUnits.textContent = 'units';
@@ -560,15 +665,26 @@
                 kpiUnits.textContent = Math.round(result.cumUnits).toLocaleString();
                 kpiUnitsChange.textContent = 'annualized';
 
-                // Break-even
+                kpiSafety.textContent = fmtPct(result.marginSafety);
+                kpiSafetyLabel.textContent = 'vs. break-even';
+
+                kpiDepreciation.textContent = fmt(result.totalDep);
+                kpiDepreciationLabel.textContent = 'annual';
+
+                kpiTax.textContent = taxRatePct.toFixed(0) + '%';
+                kpiTaxLabel.textContent = 'effective';
+
+                // Break-even card
                 beUnits.textContent = isFinite(beUnitsVal) ? Math.round(beUnitsVal).toLocaleString() : '∞';
                 beRevenue.textContent = isFinite(result.beRevenue) ? fmt(result.beRevenue) : '∞';
                 beSafety.textContent = isFinite(result.marginSafety) ? fmtPct(result.marginSafety) : '—';
                 beContribution.textContent = '$' + result.contribPerUnit.toFixed(2);
 
-                // Annual
+                // Annual summary
                 annualRevenue.textContent = fmt(result.totalRevenue);
-                annualNet.textContent = fmt(result.totalNP);
+                annualEBITDA.textContent = fmt(result.totalEBITDA);
+                annualNet.textContent = fmt(result.totalNetIncome);
+                annualCashFlow.textContent = fmt(result.totalCashFlow);
                 annualGrowth.textContent = fmtPct(result.cagr);
 
                 // P&L Table
@@ -577,123 +693,220 @@
                 rows.forEach((r, idx) => {
                     const isLast = idx === rows.length - 1;
                     html += `<tr class="${isLast ? 'border-b-2 border-slate-300 dark:border-slate-600' : ''} hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">`;
-                    html += `<td class="py-2 pr-4 font-medium text-slate-700 dark:text-slate-300">M${r.month}</td>`;
-                    html += `<td class="text-right py-2 px-3 font-mono">${fmt(r.revenue)}</td>`;
-                    html += `<td class="text-right py-2 px-3 font-mono text-slate-500 dark:text-slate-400">${fmt(r.vc)}</td>`;
-                    html += `<td class="text-right py-2 px-3 font-mono text-slate-500 dark:text-slate-400">${fmt(r.fc)}</td>`;
+                    html += `<td class="py-2 pr-2 font-medium text-slate-700 dark:text-slate-300">M${r.month}</td>`;
+                    html += `<td class="text-right py-2 px-2 font-mono">${fmt(r.revenue)}</td>`;
+                    html += `<td class="text-right py-2 px-2 font-mono text-slate-500 dark:text-slate-400">${fmt(r.vc)}</td>`;
                     html +=
-                        `<td class="text-right py-2 px-3 font-mono text-emerald-600 dark:text-emerald-400">${fmt(r.gp)}</td>`;
+                        `<td class="text-right py-2 px-2 font-mono text-amber-600 dark:text-amber-400">${fmt(r.fixedCash)}</td>`;
                     html +=
-                        `<td class="text-right py-2 px-3 font-mono ${r.np >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400'}">${fmt(r.np)}</td>`;
+                        `<td class="text-right py-2 px-2 font-mono text-purple-500 dark:text-purple-400">${fmt(r.depreciation)}</td>`;
                     html +=
-                        `<td class="text-right py-2 px-3 font-mono ${r.margin >= 0.1 ? 'text-emerald-600' : r.margin >= 0 ? 'text-amber-600' : 'text-rose-600'}">${fmtPct(r.margin)}</td>`;
+                        `<td class="text-right py-2 px-2 font-mono text-purple-600 dark:text-purple-400">${fmt(r.ebitda)}</td>`;
+                    html +=
+                        `<td class="text-right py-2 px-2 font-mono text-indigo-600 dark:text-indigo-400">${fmt(r.ebit)}</td>`;
+                    html +=
+                        `<td class="text-right py-2 px-2 font-mono ${r.netIncome >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${fmt(r.netIncome)}</td>`;
+                    html +=
+                        `<td class="text-right py-2 px-2 font-mono ${r.margin >= 0.1 ? 'text-emerald-600' : r.margin >= 0 ? 'text-amber-600' : 'text-rose-600'}">${fmtPct(r.margin)}</td>`;
                     html += `</tr>`;
                 });
                 pnlBody.innerHTML = html;
 
-                // Chart
-                updateChart(d);
+                // Charts
+                updateCharts(d);
             }
 
-            // --- Chart ---
-            function updateChart(data) {
-                if (!chartCanvas) return;
-                const ctx = chartCanvas.getContext('2d');
+            // --- Charts ---
+            function updateCharts(data) {
+                // Chart 1: Revenue, Net Income, Total Costs
+                const ctx1 = chartCanvas.getContext('2d');
                 const labels = data.map(d => 'M' + d.month);
                 const revData = data.map(d => d.revenue);
-                const npData = data.map(d => d.np);
-                const costData = data.map(d => d.vc + d.fc);
+                const niData = data.map(d => d.netIncome);
+                const costData = data.map(d => d.vc + d.fixedCash + d.depreciation);
 
                 if (chartInstance) {
                     chartInstance.data.labels = labels;
                     chartInstance.data.datasets[0].data = revData;
-                    chartInstance.data.datasets[1].data = npData;
+                    chartInstance.data.datasets[1].data = niData;
                     chartInstance.data.datasets[2].data = costData;
                     chartInstance.update();
-                    return;
+                } else {
+                    chartInstance = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Revenue',
+                                data: revData,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59,130,246,0.08)',
+                                fill: true,
+                                tension: 0.3,
+                                pointRadius: 2,
+                                pointBackgroundColor: '#3b82f6',
+                                borderWidth: 2.5,
+                            }, {
+                                label: 'Net Income',
+                                data: niData,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16,185,129,0.06)',
+                                fill: true,
+                                tension: 0.3,
+                                pointRadius: 2,
+                                pointBackgroundColor: '#10b981',
+                                borderWidth: 2.5,
+                            }, {
+                                label: 'Total Costs',
+                                data: costData,
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'rgba(245,158,11,0.05)',
+                                fill: true,
+                                tension: 0.3,
+                                pointRadius: 2,
+                                pointBackgroundColor: '#f59e0b',
+                                borderWidth: 2,
+                                borderDash: [4, 4],
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15,23,42,0.85)',
+                                    titleColor: '#f1f5f9',
+                                    bodyColor: '#e2e8f0',
+                                    borderColor: 'rgba(255,255,255,0.06)',
+                                    borderWidth: 1,
+                                    cornerRadius: 10,
+                                    padding: 10,
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            return ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#94a3b8', font: { size: 9 } },
+                                },
+                                y: {
+                                    grid: { color: 'rgba(0,0,0,0.04)' },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        font: { size: 9 },
+                                        callback: function(value) {
+                                            if (value >= 1e6) return '$' + (value / 1e6).toFixed(1) + 'M';
+                                            if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                            return '$' + value.toFixed(0);
+                                        }
+                                    }
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            }
+                        }
+                    });
                 }
 
-                chartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Revenue',
-                            data: revData,
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59,130,246,0.08)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointBackgroundColor: '#3b82f6',
-                            borderWidth: 2.5,
-                        }, {
-                            label: 'Net Profit',
-                            data: npData,
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16,185,129,0.06)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointBackgroundColor: '#10b981',
-                            borderWidth: 2.5,
-                        }, {
-                            label: 'Total Costs',
-                            data: costData,
-                            borderColor: '#f59e0b',
-                            backgroundColor: 'rgba(245,158,11,0.05)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointBackgroundColor: '#f59e0b',
-                            borderWidth: 2,
-                            borderDash: [4, 4],
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: 'rgba(15,23,42,0.85)',
-                                titleColor: '#f1f5f9',
-                                bodyColor: '#e2e8f0',
-                                borderColor: 'rgba(255,255,255,0.06)',
+                // Chart 2: Stacked bar - Variable, Fixed, Dep, Net Profit
+                const ctx2 = costChartCanvas.getContext('2d');
+                const vcData = data.map(d => d.vc);
+                const fixedData = data.map(d => d.fixedCash);
+                const depData = data.map(d => d.depreciation);
+                const profitData = data.map(d => d.netIncome > 0 ? d.netIncome : 0);
+                // negative net income not shown as positive; we could show as negative but stacking negative is tricky; we'll show profit as separate positive bar
+
+                if (costChartInstance) {
+                    costChartInstance.data.labels = labels;
+                    costChartInstance.data.datasets[0].data = vcData;
+                    costChartInstance.data.datasets[1].data = fixedData;
+                    costChartInstance.data.datasets[2].data = depData;
+                    costChartInstance.data.datasets[3].data = profitData;
+                    costChartInstance.update();
+                } else {
+                    costChartInstance = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Variable Cost',
+                                data: vcData,
+                                backgroundColor: 'rgba(244, 63, 94, 0.7)',
+                                borderColor: '#f43f5e',
                                 borderWidth: 1,
-                                cornerRadius: 10,
-                                padding: 10,
-                                callbacks: {
-                                    label: function(ctx) {
-                                        return ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
+                            }, {
+                                label: 'Fixed Cash',
+                                data: fixedData,
+                                backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                                borderColor: '#f59e0b',
+                                borderWidth: 1,
+                            }, {
+                                label: 'Depreciation',
+                                data: depData,
+                                backgroundColor: 'rgba(168, 85, 247, 0.7)',
+                                borderColor: '#a855f7',
+                                borderWidth: 1,
+                            }, {
+                                label: 'Net Profit',
+                                data: profitData,
+                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                                borderColor: '#10b981',
+                                borderWidth: 1,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15,23,42,0.85)',
+                                    titleColor: '#f1f5f9',
+                                    bodyColor: '#e2e8f0',
+                                    borderColor: 'rgba(255,255,255,0.06)',
+                                    borderWidth: 1,
+                                    cornerRadius: 10,
+                                    padding: 10,
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            return ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: '#94a3b8', font: { size: 9 } },
                             },
-                            y: {
-                                grid: { color: 'rgba(0,0,0,0.04)' },
-                                ticks: {
-                                    color: '#94a3b8',
-                                    font: { size: 9 },
-                                    callback: function(value) {
-                                        if (value >= 1e6) return '$' + (value / 1e6).toFixed(1) + 'M';
-                                        if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
-                                        return '$' + value.toFixed(0);
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#94a3b8', font: { size: 9 } },
+                                },
+                                y: {
+                                    stacked: false,
+                                    grid: { color: 'rgba(0,0,0,0.04)' },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        font: { size: 9 },
+                                        callback: function(value) {
+                                            if (value >= 1e6) return '$' + (value / 1e6).toFixed(1) + 'M';
+                                            if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                            return '$' + value.toFixed(0);
+                                        }
                                     }
                                 }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
                             }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
                         }
-                    }
-                });
+                    });
+                }
             }
 
             // --- Scenario buttons ---
@@ -734,7 +947,6 @@
                         themeIcon.textContent = '☀️';
                     }
                 });
-                // init icon
                 if (document.documentElement.classList.contains('dark')) {
                     themeIcon.textContent = '☀️';
                 } else {
@@ -742,36 +954,33 @@
                 }
             }
 
-            // --- Wire up sliders ---
-            const sliderIds = ['unitPrice', 'unitsSold', 'varCost', 'fixedCost', 'growthRate', 'whatIfPrice', 'whatIfVolume'];
+            // --- Wire up all sliders ---
+            const sliderIds = ['unitPrice', 'unitsSold', 'varCost', 'fixedCost', 'depreciation', 'taxRate', 'growthRate',
+                'whatIfPrice', 'whatIfVolume'
+            ];
             sliderIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     el.addEventListener('input', render);
                 } else {
-                    console.warn('Slider element with id "' + id + '" not found.');
+                    console.warn('Slider #' + id + ' not found.');
                 }
             });
 
-            // --- Initial render after DOM is ready ---
-            // Also ensure chart canvas is ready
-            if (chartCanvas) {
-                // initial render
-                render();
-            } else {
-                console.error('Chart canvas not found.');
-            }
+            // --- Initial render ---
+            render();
 
-            // --- Re-render on resize to fix chart ---
+            // --- Resize handler ---
             let resizeTimer;
             window.addEventListener('resize', function() {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
                     if (chartInstance) chartInstance.resize();
+                    if (costChartInstance) costChartInstance.resize();
                 }, 150);
             });
 
-            console.log('🧵 Terry\'s Trousers Profit Simulator · ready');
+            console.log('🧵 Terry\'s Trousers Executive Dashboard · ready');
         })();
     </script>
 
