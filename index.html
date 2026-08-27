@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terry's Trousers · Profit Simulator</title>
+
+    <!-- Tailwind + Inter Font -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: #f6f8fc;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            border-color: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .stat-value {
+            font-feature-settings: "tnum";
+        }
+        .input-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            transition: all 0.15s;
+        }
+        .input-range::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            background: #2563eb;
+        }
+        .input-range::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        .input-range {
+            height: 6px;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+        .dark .input-range {
+            background: #334155;
+        }
+        .input-range:focus {
+            outline: none;
+        }
+        .metric-ring {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .metric-ring:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        }
+        .dark .metric-ring:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .delay-1 {
+            animation-delay: 0.05s;
+        }
+        .delay-2 {
+            animation-delay: 0.10s;
+        }
+        .delay-3 {
+            animation-delay: 0.15s;
+        }
+        .delay-4 {
+            animation-delay: 0.20s;
+        }
+        .delay-5 {
+            animation-delay: 0.25s;
+        }
+        .delay-6 {
+            animation-delay: 0.30s;
+        }
+        .dark .chart-container canvas {
+            filter: brightness(0.9) saturate(0.8);
+        }
+        /* scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800 dark:text-slate-200 transition-colors duration-300">
+
+    <!-- ====== DARK MODE TOGGLE ====== -->
+    <script>
+        (function() {
+            const stored = localStorage.getItem('tt-theme');
+            if (stored === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else if (stored === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
+    <!-- ====== MAIN APP ====== -->
+    <div id="app" class="min-h-screen px-4 py-6 md:px-8 md:py-10 max-w-7xl mx-auto">
+
+        <!-- HEADER -->
+        <header class="flex flex-wrap items-center justify-between gap-4 mb-8 fade-in">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                    <span class="bg-blue-600 text-white text-sm px-3 py-1 rounded-lg">🧵</span>
+                    Terry's Trousers
+                </h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium tracking-wide">
+                    Strategic Financial Modeling &amp; Profit Growth Calculator
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="themeToggle" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all" aria-label="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <span class="text-xs font-mono bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-sm">
+                    v3.0 · live
+                </span>
+            </div>
+        </header>
+
+        <!-- ====== KPI ROW ====== -->
+        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6 fade-in delay-1">
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Revenue</div>
+                <div id="kpiRevenue" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">$0</div>
+                <div id="kpiRevenueChange" class="text-xs font-medium text-emerald-600 dark:text-emerald-400">▲ 0%</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Gross Profit</div>
+                <div id="kpiGrossProfit" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">$0</div>
+                <div id="kpiGrossMargin" class="text-xs font-medium text-blue-600 dark:text-blue-400">0% margin</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Net Profit</div>
+                <div id="kpiNetProfit" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">$0</div>
+                <div id="kpiNetMargin" class="text-xs font-medium text-indigo-600 dark:text-indigo-400">0% margin</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Break-Even</div>
+                <div id="kpiBreakEven" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">0</div>
+                <div id="kpiBreakEvenUnits" class="text-xs font-medium text-slate-400 dark:text-slate-500">units</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">ROI</div>
+                <div id="kpiROI" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">0%</div>
+                <div id="kpiROIStatus" class="text-xs font-medium text-slate-400 dark:text-slate-500">—</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 metric-ring">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Units Sold</div>
+                <div id="kpiUnits" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white stat-value mt-0.5">0</div>
+                <div id="kpiUnitsChange" class="text-xs font-medium text-slate-400 dark:text-slate-500">projected</div>
+            </div>
+        </section>
+
+        <!-- ====== MAIN CONTROLS + CHART ====== -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 fade-in delay-2">
+
+            <!-- LEFT: CONTROLS -->
+            <div class="lg:col-span-1 space-y-5">
+                <!-- Revenue -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Unit Price</label>
+                        <span id="unitPriceDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">$45.00</span>
+                    </div>
+                    <input id="unitPrice" type="range" min="10" max="120" value="45" step="0.5" class="input-range w-full" />
+                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                        <span>$10</span>
+                        <span>$120</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Units Sold (monthly)</label>
+                        <span id="unitsDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">1,250</span>
+                    </div>
+                    <input id="unitsSold" type="range" min="50" max="5000" value="1250" step="10" class="input-range w-full" />
+                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                        <span>50</span>
+                        <span>5,000</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Variable Cost / Unit</label>
+                        <span id="varCostDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">$18.00</span>
+                    </div>
+                    <input id="varCost" type="range" min="2" max="80" value="18" step="0.5" class="input-range w-full" />
+                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                        <span>$2</span>
+                        <span>$80</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fixed Costs (monthly)</label>
+                        <span id="fixedCostDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">$12,500</span>
+                    </div>
+                    <input id="fixedCost" type="range" min="1000" max="50000" value="12500" step="100" class="input-range w-full" />
+                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                        <span>$1k</span>
+                        <span>$50k</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Growth Rate (monthly %)</label>
+                        <span id="growthDisplay" class="text-sm font-bold text-blue-600 dark:text-blue-400">5.0%</span>
+                    </div>
+                    <input id="growthRate" type="range" min="0" max="25" value="5" step="0.5" class="input-range w-full" />
+                    <div class="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                        <span>0%</span>
+                        <span>25%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: CHART + SCENARIO -->
+            <div class="lg:col-span-2 space-y-5">
+                <!-- Chart -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide">12-Month Projection</h3>
+                        <div class="flex items-center gap-3 text-xs">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Revenue</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Net Profit</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Costs</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position:relative; height:240px;">
+                        <canvas id="projectionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario + What-If -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="glass-card rounded-2xl p-5">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Scenario Analysis</h4>
+                        <div class="flex gap-2 flex-wrap">
+                            <button data-scenario="realistic" class="scenario-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm hover:bg-blue-700 transition-all">Realistic</button>
+                            <button data-scenario="optimistic" class="scenario-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 transition-all">Optimistic</button>
+                            <button data-scenario="pessimistic" class="scenario-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white shadow-sm hover:bg-rose-700 transition-all">Pessimistic</button>
+                        </div>
+                        <div class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                            <span id="scenarioLabel" class="font-semibold text-slate-700 dark:text-slate-300">Realistic</span>
+                            <span id="scenarioDesc">— base case</span>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">What-If Simulator</h4>
+                        <div class="flex items-center gap-3">
+                            <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Δ Price</label>
+                            <input id="whatIfPrice" type="range" min="-30" max="30" value="0" step="1" class="input-range w-full" />
+                            <span id="whatIfPriceLabel" class="text-xs font-bold text-blue-600 dark:text-blue-400 w-10 text-right">+0%</span>
+                        </div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Δ Volume</label>
+                            <input id="whatIfVolume" type="range" min="-30" max="30" value="0" step="1" class="input-range w-full" />
+                            <span id="whatIfVolumeLabel" class="text-xs font-bold text-blue-600 dark:text-blue-400 w-10 text-right">+0%</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            Impact: <span id="whatIfImpact" class="font-semibold text-slate-700 dark:text-slate-300">$0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== DETAILED TABLE & BREAK-EVEN ====== -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in delay-3">
+            <!-- Monthly breakdown -->
+            <div class="lg:col-span-2 glass-card rounded-2xl p-5 overflow-x-auto">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-wide mb-3">Monthly P&amp;L Breakdown</h3>
+                <table class="w-full text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
+                            <th class="text-left py-2 pr-4">Month</th>
+                            <th class="text-right py-2 px-3">Revenue</th>
+                            <th class="text-right py-2 px-3">Variable</th>
+                            <th class="text-right py-2 px-3">Fixed</th>
+                            <th class="text-right py-2 px-3">Gross Profit</th>
+                            <th class="text-right py-2 px-3">Net Profit</th>
+                            <th class="text-right py-2 px-3">Margin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pnlTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                        <!-- filled by js -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Break-even + summary -->
+            <div class="space-y-4">
+                <div class="glass-card rounded-2xl p-5">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Break-Even Analysis</h4>
+                    <div class="space-y-1.5 text-sm">
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Units to break even</span><span id="beUnits" class="font-bold text-slate-900 dark:text-white">0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Revenue at BE</span><span id="beRevenue" class="font-bold text-slate-900 dark:text-white">$0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Margin of safety</span><span id="beSafety" class="font-bold text-emerald-600 dark:text-emerald-400">0%</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Contribution margin</span><span id="beContribution" class="font-bold text-blue-600 dark:text-blue-400">$0</span></div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <h4
